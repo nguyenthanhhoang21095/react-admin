@@ -37,6 +37,11 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 const Users = React.lazy(() => import('./views/users/Users'));
 const User = React.lazy(() => import('./views/users/User'));
+const CreateUser = React.lazy(() => import('./views/users/CreateUser'));
+const Products = React.lazy(() => import('./views/products/Products'));
+const ProductDetail = React.lazy(() => import('./views/products/ProductDetail'));
+const ProductAdd = React.lazy(() => import('./views/products/ProductAdd'));
+const Cart = React.lazy(() => import('./views/cart'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -77,8 +82,19 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/notifications/toaster', name: 'Toaster', component: Toaster },
   { path: '/widgets', name: 'Widgets', component: Widgets },
+
+  /* Product */ 
+  { path: '/products', exact: true,  name: 'Products', component: Products },
+  { path: '/products/:id', exact: true,  name: 'Product Details', component: ProductDetail },
+  { path: '/add/products', exact: true,  name: 'Product New', component: ProductAdd },
+
+  /* User */ 
   { path: '/users', exact: true,  name: 'Users', component: Users },
-  { path: '/users/:id', exact: true, name: 'User Details', component: User }
+  { path: '/users/:id', exact: true, name: 'User Details', component: User },
+  { path: '/add/users', exact: true, name: 'Create User', component: CreateUser },
+
+   /* Cart */ 
+   { path: '/cart/:id', exact: true,  name: 'Cart', component: Cart },
 ];
 
 export default routes;

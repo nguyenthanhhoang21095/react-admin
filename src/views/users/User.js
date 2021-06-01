@@ -1,20 +1,36 @@
-import React from 'react'
-import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react'
+import React, { useEffect, useState } from 'react'
+import { CCard, CCardBody, CCardHeader, CCol, CRow, CButton } from '@coreui/react'
+import { useHistory } from 'react-router-dom'
 import CIcon from '@coreui/icons-react'
-
-import usersData from './UsersData'
+import api from 'src/services/baseApi'
+import endpoint from 'src/services/endpoint'
+// import userData from './userData'
 
 const User = ({match}) => {
-  const user = usersData.find( user => user.id.toString() === match.params.id)
+  const history = useHistory()
+
+  const [userData, setUserData] = useState(null)
+  useEffect(()=> {
+    api.get(endpoint["user"]).then(res => {
+      if (res) setUserData(res)
+    });
+  },[])
+  const user = userData?.find(user => user.id.toString() === match.params.id)
   const userDetails = user ? Object.entries(user) : 
-    [['id', (<span><CIcon className="text-muted" name="cui-icon-ban" /> Not found</span>)]]
+    [['id', (<span>Not found</span>)]]
 
   return (
     <CRow>
       <CCol lg={6}>
         <CCard>
           <CCardHeader>
-            User id: {match.params.id}
+            <div className="d-flex justify-content-between align-items-center">
+              <p className="d-inline-block font-weight-bold mb-0"> User id: {match.params.id}</p>
+              <CButton color="info" onClick={() => history.push(`/cart/${match.params.id}`)}>
+                <CIcon size={'sm'} name={'cilPencil'} />  View Cart
+              </CButton>
+            </div>
+
           </CCardHeader>
           <CCardBody>
               <table className="table table-striped table-hover">

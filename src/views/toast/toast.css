@@ -1,0 +1,36 @@
+.toaster {
+    top: 60px;
+}
+
+.toaster-slide-in {
+    animation: slide-in-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.toast-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    font-weight: bold;
+}
+
+.success {
+    background-color: #2ecc71;
+}
+
+.error {
+    background-color: #e74c3c;
+}
+
+@keyframes slide-in-right {
+    0% {
+        -webkit-transform: translateX(1000px);
+        transform: translateX(1000px);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

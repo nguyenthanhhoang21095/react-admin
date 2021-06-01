@@ -8,10 +8,16 @@ import {
   CCol,
   CDataTable,
   CRow,
-  CPagination
+  CPagination,
+  CButton,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
 } from '@coreui/react'
-
-import usersData from './UsersData'
+import api from 'src/services/baseApi'
+import endpoint from 'src/services/endpoint'
 
 const getBadge = status => {
   switch (status) {
@@ -28,29 +34,34 @@ const Users = () => {
   const queryPage = useLocation().search.match(/page=([0-9]+)/, '')
   const currentPage = Number(queryPage && queryPage[1] ? queryPage[1] : 1)
   const [page, setPage] = useState(currentPage)
-
+  const [userList, setUserList] = useState([])
   const pageChange = newPage => {
     currentPage !== newPage && history.push(`/users?page=${newPage}`)
   }
 
   useEffect(() => {
+    api.get(endpoint["user"]).then(res => {
+      if (res) setUserList(res)
+    });
     currentPage !== page && setPage(currentPage)
   }, [currentPage, page])
 
   return (
     <CRow>
-      <CCol xl={6}>
+      <CCol xl={12} lg={12} md={6} sm={6}>
         <CCard>
           <CCardHeader>
-            Users
-            <small className="text-muted"> example</small>
+            <div className="d-flex justify-content-between">
+            <p className="d-inline-block font-weight-bold">User List</p>
+              <CButton color="warning" variant="outline" onClick={() => history.push('/add/users')}>Add New User</CButton>
+            </div>
           </CCardHeader>
           <CCardBody>
           <CDataTable
-            items={usersData}
+            items={userList}
             fields={[
-              { key: 'name', _classes: 'font-weight-bold' },
-              'registered', 'role', 'status'
+              { key: 'id', _classes: 'font-weight-bold' },
+              'account', 'phone','address', 'isActive'
             ]}
             hover
             striped
