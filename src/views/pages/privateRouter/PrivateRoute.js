@@ -13,21 +13,23 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   const decodedToken = token ? jwt_decode(token) : '';
   const user = decodedToken?.data ?? null;
 
-  // useEffect(() => {
-  //   const handleGetUserApi = async () => {
-  //     if (user && user?.id) {
-  //       const res = await api.get(`${endpoint["user"]}/${user.id}`);
-  //       if (res) {
-  //         dispatch({ type: 'GET_USER', userInfo: res })
-  //       }
-  //     }
-  //   }
-  //   handleGetUserApi();
-  // }, [])
+
+
+  useEffect(() => {
+    const handleGetUserApi = async () => {
+      if (user && user?.id) {
+        const res = await api.get(`${endpoint["user"]}/${user.id}`);
+        if (res) {
+          dispatch({ type: 'GET_USER', userInfo: res })
+        }
+      }
+    }
+    handleGetUserApi();
+  }, [])
 
   // Add your own authentication on the below line.
   const userInfo = useSelector(state => state.userInfo);
-  const isLoggedIn = (Object.keys(userInfo).length ) ? true : false;
+  const isLoggedIn = (Object.keys(userInfo).length || user) ? true : false;
 
   return (
     <Route
