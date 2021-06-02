@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+// import CIcon from '@coreui/icons-react'
 import api from 'src/services/baseApi'
 import endpoint from 'src/services/endpoint'
 

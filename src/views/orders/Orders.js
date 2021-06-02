@@ -26,16 +26,20 @@ const getBadge = status => {
   }
 }
 
-const Products = () => {
-  const history = useHistory()
+const Orders = () => {
   const dispatch = useDispatch()
-  const itemPerPage = 10;
+  const history = useHistory()
 
   const queryPage = useLocation().search.match(/page=([0-9]+)/, '')
   const currentPage = Number(queryPage && queryPage[1] ? queryPage[1] : 1)
   const [page, setPage] = useState(currentPage)
-  const [productList, setProductList] = useState([])
+  const [orderList, setOrderList] = useState([])
   const [details, setDetails] = useState([])
+  const itemPerPage = 5;
+
+  const pageChange = newPage => {
+    currentPage !== newPage && history.push(`/orders?page=${newPage}`)
+  }
 
   const toggleDetails = (index) => {
     const position = details.indexOf(index)
@@ -48,52 +52,29 @@ const Products = () => {
     setDetails(newDetails)
   }
 
-  const pageChange = newPage => {
-    currentPage !== newPage && history.push(`/products?page=${newPage}`)
-  }
-
-  const handleRemoveProduct = (id) => {
-    api.remove(endpoint["product"], {
-      id
-    }).then(res => {
-      if (res) setProductList(res)
-    });
-  }
-
-  const handleEditProduct = (action = "add", data = null) => {
-    dispatch({
-      type: "EDIT_PRODUCT",
-      productEdit: {
-        mode: action,
-        data,
-      }
-    })
-    history.push('/add/products')
-  }
 
   useEffect(() => {
-    !productList.length && api.get(endpoint["product"]).then(res => {
-      if (res) setProductList(res)
+    !orderList.length && api.get(endpoint["order"]).then(res => {
+      if (res) setOrderList(res)
     });
     currentPage !== page && setPage(currentPage)
   }, [currentPage, page])
 
   return (
     <CRow>
-      <CCol xl={12} lg={12} md={12} sm={12}>
+      <CCol xl={12} lg={12} md={6} sm={6}>
         <CCard>
           <CCardHeader>
             <div className="d-flex justify-content-between">
-              <p className="d-inline-block font-weight-bold">Product List</p>
-              <CButton color="warning" variant="outline" onClick={() => handleEditProduct()}>Add New Product</CButton>
+              <p className="d-inline-block font-weight-bold">Order List</p>
             </div>
           </CCardHeader>
           <CCardBody>
             <CDataTable
-              items={productList}
+              items={orderList}
               fields={[
                 { key: 'id', _classes: 'font-weight-bold' },
-                'name', 'inStock', 'isActive',
+                'account', 'phone', 'address', 'isActive',
                 {
                   key: 'show_details',
                   label: '',
@@ -111,7 +92,7 @@ const Products = () => {
               columnFilter
               tableFilter
               // clickableRows
-              // onRowClick={(item) => history.push(`/products/${item.id}`)}
+              // onRowClick={(item) => history.push(`/users/${item.id}`)}
               scopedSlots={{
                 'status':
                   (item) => (
@@ -147,24 +128,8 @@ const Products = () => {
                           <CButton
                             size="sm"
                             color="info"
-                            onClick={() => history.push(`/products/${item.id}`)}>
+                            onClick={() => history.push(`/orders/${item.id}`)}>
                             View Detail
-                          </CButton>
-                          <CButton
-                            size="sm"
-                            color="warning"
-                            className="ml-1"
-                            onClick={() => handleEditProduct("edit", item)}
-                          >
-                            Edit
-                          </CButton>
-                          <CButton
-                            size="sm"
-                            color="danger"
-                            className="ml-1"
-                            onClick={() => handleRemoveProduct(item.id)}
-                          >
-                            Delete
                           </CButton>
                         </CCardBody>
                       </CCollapse>
@@ -175,7 +140,7 @@ const Products = () => {
             <CPagination
               activePage={page}
               onActivePageChange={pageChange}
-              pages={Math.ceil(productList.length / itemPerPage)}
+              pages={Math.ceil(orderList.length / itemPerPage)}
               align="center"
               doubleArrows
             />
@@ -186,4 +151,4 @@ const Products = () => {
   )
 }
 
-export default Products
+export default Orders

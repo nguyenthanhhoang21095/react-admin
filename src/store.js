@@ -6,18 +6,18 @@ const initialState = {
     isShow: false,
     mess: "",
     type: "normal",
-  }
+  },
+  userInfo: {},
+  productEdit: { 
+    mode: "add",
+    data: null,
+  },
+  userEdit: null,
 }
 
-const changeState = (state = initialState, { type, ...rest }) => {
-  switch (type) {
-    case 'set':
-      return {...state, ...rest }
-    case 'SHOW_TOAST': 
-      return {...state, ...rest }  
-    default:
-      return state
-  }
+const changeState = (state = initialState, { type = "", ...rest }) => {
+  if (type) return {...state, ...rest}
+  return {...state}
 }
 
 const store = createStore(changeState)

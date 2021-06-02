@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -15,8 +15,74 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import Toast from 'src/views/toast/index'
+import { useHistory } from "react-router-dom";
+import api from 'src/services/baseApi'
+import endpoint from 'src/services/endpoint'
+import { useSelector, useDispatch } from 'react-redux'
+import { saveDataLocal } from 'src/utils'
 
 const Login = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const toastShow = useSelector(state => state.toastShow);
+
+  const [account, setAccount] = useState("");
+  const [password, setPassword] = useState("");
+
+  const showToastOn = (mess = "", type = "") => {
+    dispatch({ type: "SHOW_TOAST", toastShow: { isShow: true, mess, type } });
+    setTimeout(() => {
+      showToastOff()
+    }, 3000);
+  }
+
+  const showToastOff = () => {
+    dispatch({ type: "SHOW_TOAST", toastShow: { isShow: false, mess: '', type: 'normal' } });
+  }
+
+  const validateLogin = async () => {
+    if (!account.length || !password.length) {
+      showToastOn('FAIL: Please check again your info', "error");
+      return false;
+    }
+
+    const users = await api.get(endpoint['user']);
+    const idxUser = users.findIndex((item) => item.account === account)
+    if (idxUser === -1) {
+      showToastOn('FAIL: User doest not exist', "error");
+      return false;
+    }
+
+    return true;
+  }
+
+  const handleLogin = async () => {
+    try {
+      const isValid = await validateLogin();
+      if (isValid) {
+        const res = await api.post(endpoint["login"], {
+          account,
+          password
+        })
+        if (res && res.accessToken && res.refreshToken) {
+          const { accessToken, refreshToken } = res;
+          saveDataLocal('access_token', accessToken);
+          saveDataLocal('refresh_token', refreshToken);
+          dispatch({type: 'GET_USER', userInfo: res })
+          showToastOn('SUCCESS: Login success', "success");
+          setTimeout(() => history.push("/dashboard"), 1000);
+        } else {
+          showToastOn('FAIL: Incorrect input', "error");
+        }
+      }
+    }
+    catch(error)  {
+      showToastOn('FAIL: Incorrect input', "error");
+      throw new Error(error)
+    }
+   
+  }
   return (
     <div className="c-app c-default-layout flex-row align-items-center">
       <CContainer>
@@ -34,7 +100,7 @@ const Login = () => {
                           <CIcon name="cil-user" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="text" placeholder="Username" autoComplete="username" />
+                      <CInput value={account} onChange={(e) => setAccount(e.target.value)} type="text" placeholder="Username" autoComplete="username" />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>
@@ -42,11 +108,11 @@ const Login = () => {
                           <CIcon name="cil-lock-locked" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="password" placeholder="Password" autoComplete="current-password" />
+                      <CInput value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" autoComplete="current-password" />
                     </CInputGroup>
                     <CRow>
                       <CCol xs="6">
-                        <CButton color="primary" className="px-4">Login</CButton>
+                        <CButton onClick={handleLogin} color="primary" className="px-4">Login</CButton>
                       </CCol>
                       <CCol xs="6" className="text-right">
                         <CButton color="link" className="px-0">Forgot password?</CButton>
@@ -71,6 +137,9 @@ const Login = () => {
           </CCol>
         </CRow>
       </CContainer>
+
+      <Toast isShow={toastShow.isShow} message={toastShow.mess} type={toastShow.type} />
+
     </div>
   )
 }

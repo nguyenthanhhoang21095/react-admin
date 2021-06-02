@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from 'react'
-import { CCard, CCol, CRow, CButton, CInput, CLabel, CToast, CToastBody, CToastClose } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+import React, { useState } from 'react'
+import { CCard, CCol, CRow, CButton, CInput, CLabel } from '@coreui/react'
+// import CIcon from '@coreui/icons-react'
 import api from 'src/services/baseApi'
 import endpoint from 'src/services/endpoint'
 import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import Toast from 'src/views/toast/index'
 
-const CreateUser = () => {
+const EditUser = () => {
     const history = useHistory()
-    const dispatch = useDispatch()
-    const toastShow = useSelector(state => state.toastShow);
+    const dispatch = useDispatch();
 
-    const [account, setAccount] = useState("");
-    const [password, setPassword] = useState("");
-    const [fullName, setFullName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [address, setAddress] = useState("");
+    const toastShow = useSelector(state => state.toastShow);
+    const userEdit = useSelector(state => state.userEdit);
+
+    const [account] = useState(userEdit?.account ?? "");
+    const [password] = useState(userEdit?.password ?? "");
+    console.log('pass', password);
+    const [fullName, setFullName] = useState(userEdit?.fullName ?? "");
+    const [phone, setPhone] = useState(userEdit?.phone ?? "");
+    const [address, setAddress] = useState(userEdit?.address ?? "");
 
     const showToastOn = (mess = "", type = "") => {
         dispatch({ type: "SHOW_TOAST", toastShow: { isShow: true, mess, type } });
@@ -35,35 +38,37 @@ const CreateUser = () => {
         if (!phoneRule.test(phone)) return false;
         return true;
     }
+
     const handleSubmit = () => {
         if (checkValidInfo()) {
-            console.log('here');
-            api.post(endpoint["user"], {
+            userEdit.id && api.update(endpoint["user"], {
+                id: userEdit.id,
                 account,
                 password,
                 fullName,
                 phone,
                 address,
             }).then(res => {
-                showToastOn('SUCCESS: Added new product', "success");
-                history.push("/users")
+                showToastOn('SUCCESS: Edit user success', "success");
+                history.goBack();
             })
             return;
         }
         showToastOn('FAIL: Please check again your info', "error");
         return;
     }
+
     return (
         <>
             <CRow>
                 <CCol xl={12} lg={12} md={12} sm={12}>
                     <CCard className="p-4 d-flex align-items-center">
-                        <h2 className="text-center mb-5">Create New User</h2>
+                        <h2 className="text-center mb-5">Edit User</h2>
                         <div className="w-50">
                             <div className="d-flex flex-row align-items-center mb-3 justify-content-start">
                                 <CLabel className="w-50 mb-0 text-nowrap font-weight-bold">Account</CLabel>
                                 <CInput
-                                    onChange={(e) => setAccount(e.target.value)}
+                                    disabled
                                     value={account}
                                     required
                                     type="text"
@@ -75,8 +80,7 @@ const CreateUser = () => {
                             <div className="d-flex flex-row align-items-center mb-3 justify-content-start">
                                 <CLabel className="w-50 mb-0 text-nowrap font-weight-bold">Password</CLabel>
                                 <CInput
-                                    required
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    disabled
                                     value={password}
                                     type="password"
                                     placeholder="Type your password"
@@ -120,7 +124,7 @@ const CreateUser = () => {
                             </div>
 
                             <div className="d-flex w-50 mx-auto my-0 flex-row align-items-center justify-content-around mb-3">
-                                <CButton color="success" className="w-25" onClick={handleSubmit}>Add</CButton>
+                                <CButton color="success" className="w-25" onClick={handleSubmit}>Update</CButton>
                                 <CButton color="danger" className="w-25" onClick={() => history.push('/users')}>Cancel</CButton>
                             </div>
                         </div>
@@ -132,4 +136,4 @@ const CreateUser = () => {
     )
 }
 
-export default CreateUser
+export default EditUser

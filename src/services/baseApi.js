@@ -1,5 +1,11 @@
 import baseUri from './baseUri'
 import axios from 'axios'
+import { getDataLocal } from 'src/utils';
+
+const access_token = getDataLocal('access_token');
+const configBearerToken = {
+    Authorization: access_token ? `Bearer ${access_token}` : '',
+}
 
 function handleResponse(res) {
     if (res && res.status === 200) {
@@ -8,9 +14,12 @@ function handleResponse(res) {
 }
 
 async function get(url) {
-    try {   
+    try {
         const options = {
             method: "GET",
+            headers: {
+                ...configBearerToken,
+            },
             url: baseUri + url
         }
         const res = await axios(options);
@@ -24,7 +33,10 @@ async function post(url, body) {
     try {
         const options = {
             method: "POST",
-            headers: { "content-type": "application/json" },
+            headers: {
+                "content-type": "application/json",
+                ...configBearerToken,
+            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
@@ -39,7 +51,10 @@ async function update(url, body) {
     try {
         const options = {
             method: "PUT",
-            headers: { "content-type": "application/json" },
+            headers: {
+                "content-type": "application/json",
+                ...configBearerToken,
+            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
@@ -54,7 +69,10 @@ async function remove(url, body) {
     try {
         const options = {
             method: "DELETE",
-            headers: { "content-type": "application/json" },
+            headers: {
+                "content-type": "application/json",
+                ...configBearerToken,
+            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
