@@ -13,8 +13,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   const decodedToken = token ? jwt_decode(token) : '';
   const user = decodedToken?.data ?? null;
 
-
-
   useEffect(() => {
     const handleGetUserApi = async () => {
       if (user && user?.id) {

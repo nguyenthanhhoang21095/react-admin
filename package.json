@@ -52,8 +52,8 @@
     "react-scripts": "^4.0.3"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=production && set PORT=5678 && react-scripts start",
-    "dev": "cross-env NODE_ENV=dev && set PORT=4567 && react-scripts start",
+    "start": "set PORT=5678 && react-scripts start",
+    "dev": "set PORT=4567 && react-scripts dev",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:cov": "npm test -- --coverage --watchAll=false",

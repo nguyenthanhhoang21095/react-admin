@@ -69,7 +69,7 @@ const Users = () => {
 
   return (
     <CRow>
-      <CCol xl={12} lg={12} md={6} sm={6}>
+      <CCol xl={12} lg={12} md={12} sm={12}>
         <CCard>
           <CCardHeader>
             <div className="d-flex justify-content-between">
