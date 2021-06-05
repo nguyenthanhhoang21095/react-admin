@@ -1,11 +1,31 @@
 import baseUri from './baseUri'
 import axios from 'axios'
-import { getDataLocal } from 'src/utils';
+import Cookies from 'js-cookie';
 
-const access_token = getDataLocal('access_token');
+const access_token = Cookies.get('access_token');
 const configBearerToken = {
     Authorization: access_token ? `Bearer ${access_token}` : '',
 }
+
+const axiosInstance = axios.create({
+    withCredentials: true,
+    credentials: 'include',
+});
+
+// config request 
+axiosInstance.interceptors.request.use(
+    (config) => {
+        return {
+            ...config,
+            headers: {
+                "content-type": "application/json",
+                ...configBearerToken,
+            }
+        }
+    },
+    (error) =>
+        Promise.reject(error)
+);
 
 function handleResponse(res) {
     if (res && res.status === 200) {
@@ -17,15 +37,12 @@ async function get(url) {
     try {
         const options = {
             method: "GET",
-            headers: {
-                ...configBearerToken,
-            },
             url: baseUri + url
         }
-        const res = await axios(options);
+        const res = await axiosInstance(options);
         return handleResponse(res);
     } catch (err) {
-        throw Error(err)
+        console.error(err)
     }
 }
 
@@ -33,17 +50,13 @@ async function post(url, body) {
     try {
         const options = {
             method: "POST",
-            headers: {
-                "content-type": "application/json",
-                ...configBearerToken,
-            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
-        const res = await axios(options);
+        const res = await axiosInstance(options);
         return handleResponse(res);
     } catch (err) {
-        throw Error(err)
+        console.error(err)
     }
 }
 
@@ -51,17 +64,13 @@ async function update(url, body) {
     try {
         const options = {
             method: "PUT",
-            headers: {
-                "content-type": "application/json",
-                ...configBearerToken,
-            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
-        const res = await axios(options);
+        const res = await axiosInstance(options);
         return handleResponse(res);
     } catch (err) {
-        throw Error(err)
+        console.error(err)
     }
 }
 
@@ -69,17 +78,13 @@ async function remove(url, body) {
     try {
         const options = {
             method: "DELETE",
-            headers: {
-                "content-type": "application/json",
-                ...configBearerToken,
-            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
-        const res = await axios(options);
+        const res = await axiosInstance(options);
         return handleResponse(res);
     } catch (err) {
-        throw Error(err)
+        console.error(err)
     }
 }
 

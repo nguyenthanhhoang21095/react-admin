@@ -46,14 +46,6 @@ const Login = () => {
       showToastOn('FAIL: Please check again your info', "error");
       return false;
     }
-
-    const users = await api.get(endpoint['user']);
-    const idxUser = users.findIndex((item) => item.account === account)
-    if (idxUser === -1) {
-      showToastOn('FAIL: User doest not exist', "error");
-      return false;
-    }
-
     return true;
   }
 
@@ -65,9 +57,8 @@ const Login = () => {
           account,
           password
         })
-        if (res && res.accessToken && res.refreshToken) {
-          const { accessToken, refreshToken } = res;
-          saveDataLocal('access_token', accessToken);
+        if (res && res.refreshToken) {
+          const { refreshToken } = res;
           saveDataLocal('refresh_token', refreshToken);
           dispatch({type: 'GET_USER', userInfo: res })
           showToastOn('SUCCESS: Login success', "success");
@@ -79,7 +70,7 @@ const Login = () => {
     }
     catch(error)  {
       showToastOn('FAIL: Incorrect input', "error");
-      throw new Error(error)
+      console.error(error)
     }
    
   }

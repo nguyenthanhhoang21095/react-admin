@@ -5,11 +5,12 @@ import { Redirect, Route } from 'react-router-dom'
 import jwt_decode from "jwt-decode";
 import api from 'src/services/baseApi'
 import endpoint from 'src/services/endpoint'
+import Cookies from 'js-cookie';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const dispatch = useDispatch();
 
-  const token = getDataLocal("access_token");
+  const token = Cookies.get('access_token');
   const decodedToken = token ? jwt_decode(token) : '';
   const user = decodedToken?.data ?? null;
 
