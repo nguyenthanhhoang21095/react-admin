@@ -57,9 +57,10 @@ const Login = () => {
           account,
           password
         })
-        if (res && res.refreshToken) {
-          const { refreshToken } = res;
+        if (res && res.accessToken && res.refreshToken) {
+          const { refreshToken, accessToken } = res;
           saveDataLocal('refresh_token', refreshToken);
+          saveDataLocal('access_token', accessToken);
           dispatch({type: 'GET_USER', userInfo: res })
           showToastOn('SUCCESS: Login success', "success");
           setTimeout(() => history.push("/dashboard"), 1000);

@@ -1,31 +1,7 @@
 import baseUri from './baseUri'
 import axios from 'axios'
-import Cookies from 'js-cookie';
-
-const access_token = Cookies.get('access_token');
-const configBearerToken = {
-    Authorization: access_token ? `Bearer ${access_token}` : '',
-}
-
-const axiosInstance = axios.create({
-    withCredentials: true,
-    credentials: 'include',
-});
-
-// config request 
-axiosInstance.interceptors.request.use(
-    (config) => {
-        return {
-            ...config,
-            headers: {
-                "content-type": "application/json",
-                ...configBearerToken,
-            }
-        }
-    },
-    (error) =>
-        Promise.reject(error)
-);
+// import Cookies from 'js-cookie';
+import { getDataLocal } from 'src/utils';
 
 function handleResponse(res) {
     if (res && res.status === 200) {
@@ -35,11 +11,16 @@ function handleResponse(res) {
 
 async function get(url) {
     try {
+        const access_token = getDataLocal('access_token');
         const options = {
             method: "GET",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": access_token ? `Bearer ${access_token}` : '',
+            },
             url: baseUri + url
         }
-        const res = await axiosInstance(options);
+        const res = await axios(options);
         return handleResponse(res);
     } catch (err) {
         console.error(err)
@@ -48,12 +29,17 @@ async function get(url) {
 
 async function post(url, body) {
     try {
+        const access_token = getDataLocal('access_token');
         const options = {
             method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": access_token ? `Bearer ${access_token}` : '',
+            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
-        const res = await axiosInstance(options);
+        const res = await axios(options);
         return handleResponse(res);
     } catch (err) {
         console.error(err)
@@ -62,12 +48,17 @@ async function post(url, body) {
 
 async function update(url, body) {
     try {
+        const access_token = getDataLocal('access_token');
         const options = {
             method: "PUT",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": access_token ? `Bearer ${access_token}` : '',
+            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
-        const res = await axiosInstance(options);
+        const res = await axios(options);
         return handleResponse(res);
     } catch (err) {
         console.error(err)
@@ -76,12 +67,17 @@ async function update(url, body) {
 
 async function remove(url, body) {
     try {
+        const access_token = getDataLocal('access_token');
         const options = {
             method: "DELETE",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": access_token ? `Bearer ${access_token}` : '',
+            },
             data: JSON.stringify(body),
             url: baseUri + url
         }
-        const res = await axiosInstance(options);
+        const res = await axios(options);
         return handleResponse(res);
     } catch (err) {
         console.error(err)
