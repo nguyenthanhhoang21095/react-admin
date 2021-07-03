@@ -16,7 +16,6 @@ const EditUser = () => {
 
     const [account] = useState(userEdit?.account ?? "");
     const [password] = useState(userEdit?.password ?? "");
-    console.log('pass', password);
     const [fullName, setFullName] = useState(userEdit?.fullName ?? "");
     const [phone, setPhone] = useState(userEdit?.phone ?? "");
     const [address, setAddress] = useState(userEdit?.address ?? "");
